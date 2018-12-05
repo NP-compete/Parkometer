@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link href='https://fonts.googleapis.com/css?family=Lato:300,400,700' rel='stylesheet' type='text/css'>
+    <title>parkingBuddy</title>
+    <script src='https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.js'></script>
+<link href='https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.css' rel='stylesheet' />
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+
+    <style>
+
+    html,body {
+        height: 100%;
+        width: 100%;
+        margin: 0px;
+        padding: 0px;
+        font-family: "Lato" ;
+        overflow: hidden;
+    }
+
+    ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background: #ff5a5f;
+        position: fixed;
+        top: 0;
+        width: 60%;
+    }
+
+    li {
+        display: inline;
+        float: left;
+    }
+
+    li a {
+        display: block;
+        color: white;
+        text-align: center;
+        padding: 18px 20px;
+        text-decoration: none;
+        font-weight: 300;
+        text-transform: uppercase;
+    }
+
+    li a:hover {
+        /*background: #111;*/
+        cursor: default;
+        text-decoration: none;
+        color: white;
+    }
+
+    #brand {
+        font-size: 18px;
+        font-weight: 700;
+        padding: 18px 14px 18px 28px;
+    }
+
+    #tagline {
+        font-size: 13px;
+        text-transform: uppercase;
+        margin-top: 4px;
+        letter-spacing: 0.7px;
+    }
+
+    li > #login {
+        position: absolute;
+        padding-top: 22px;
+        padding-right: 70px;
+        padding-left: 30px;
+        margin-right: -2px;
+        right: 40px;
+        font-weight: 400;
+        font-size: 14px;
+        bottom: 0;
+        top: 0;
+        width: 80px;
+    }
+
+    li > #login:hover {
+        background-color: #ff7e82;
+        cursor: pointer;
+    }
+
+    #left {
+        position: absolute;
+        width: 60%;
+        left: 0;
+        /*z-index: -1;*/
+        transition: all 0.5s ease-in-out;
+    }
+
+    #container {
+        position: relative;
+        padding-left: 22px;
+        margin-top: 50px;
+        padding-top: 20px;
+        padding-left: 5%;
+        overflow: auto;
+
+    }
+
+    .inputbar {
+        display: inline-block;
+        font-size: 14px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        padding-left: 5px;
+        width: 60%;
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+
+    .button {
+        display: inline-block;
+        height: 45px;
+        font-size: 14px;
+        padding: 10px;
+        width: 125px;
+        border: 2.5px solid #ff5a5f;
+        /*border-color: #ff5a5f;*/
+        /*border-bottom-color: #e00007;*/
+        background-color: #fff;
+        color: #ff5a5f;
+        margin-top: 5px;
+        margin-left: 5px;
+        /*float: left;*/
+        position: relative;
+        font-weight: 400;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+    }
+
+    .button:hover {
+/*        border-color: #ff7e82;
+        border-bottom-color: #fa0008;
+        background-color: #ff7e82;
+*/
+        background-color: #ff5a5f;
+        color: #fff;
+    }
+
+    .geolocate-btn {
+        width: auto;
+        margin-left: 0;
+        padding: 0px 58px;
+        cursor: pointer;
+        display: block;
+    }
+
+    form > p {
+        font-weight: 400;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        margin-top: 20px;
+    }
+
+    #right {
+        position: absolute;
+        right: -7%;
+        /*background: #33cccc;*/
+        height: 100%;
+        width: 50%;
+        display: inline-block;
+        /*opacity: .7;*/
+        transition: all 0.5s ease-in-out;
+    }
+
+    #right:hover {
+        width: 60%;
+        opacity: 1;
+    }
+
+    #map {
+        height: 100%;
+        position: relative;
+    }
+
+    .claim {
+        position: absolute;
+        top: 40%;
+        z-index: 1;
+        left: 25%;
+        height: 125px;
+        width: 300px;
+        padding-top: 10px;
+        background: white;
+        opacity: .9;
+        text-align: center;
+        transition: all 1s ease-in-out;
+    }
+
+    .claim > h3 {
+        font-weight: 400;
+        letter-spacing: 1.5px;
+    }
+
+    .claim > h4 {
+        font-weight: 300;
+        letter-spacing: 1px;
+    }
+
+    #automatic-btn {
+        height: 30px;
+        width: auto;
+    }
+
+    .dropdown {
+    position: absolute;
+    right: 33%;
+    }
+
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: #f9f9f9;
+        min-width: 160px;
+        /*box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);*/
+        padding: 16px 16px;
+    }
+
+    .dropdown:hover .dropdown-content {
+        display: block;
+    }
+
+    .show {
+        display: block;
+    }
+
+    .numberbox {
+        display: none;
+        height: 45px;
+        font-size: 14px;
+        padding: 10px;
+        width: 250px;
+        border: 2.5px solid #ff5a5f;
+        /*border-color: #ff5a5f;*/
+        /*border-bottom-color: #e00007;*/
+        background-color: #fff;
+        color: #ff5a5f;
+        margin-top: 5px;
+        margin-left: 5px;
+        /*float: left;*/
+        position: relative;
+        font-weight: 400;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+
+    }
+
+    .show-numberbox {
+        display: inline-block;
+    }
+
+    #submit_parked {
+        display: none;
+    }
+
+    </style>
+</head>
+<body>
+<div id="left" >
+    <ul>
+        <li><a href="#" id="brand">parkingBuddy</a></li>
+        <li><a href="#" id="tagline">Smart Parking Foreseen</a></li>
+        <li><a href="#" id="login">Login</a></li>
+        <!-- <li><a href="#">Blog</a></li> -->
+    </ul>
+    <div class="dropdown">
+        <div class="dropdown-content">
+            <a href="https://accounts.automatic.com/oauth/authorize/?client_id=14a608f074d95b370e74&response_type=code&scope=scope:public%20scope:user:profile%20scope:location%20scope:vehicle:profile%20scope:vehicle:events%20scope:trip%20scope:behavior" target="_blank"><img id="automatic-btn" src="https://developer.automatic.com/_assets/images/resources/auth-buttons/auth_automatic-login-24-5759c8ffd1.svg"/></a>
+        </div>
+    </div>
+    <div id="container">
+
+<!-- <h1>ParkingBUDDY: Parking Made Easy</h1> -->
+    <div>
+    <form id="search" action="/search" method="get">
+        <p>Heading out?</p>
+        <input type="text" class="inputbar" name="location" placeholder="Type the address to search nearby available garage"><button class="button" id="submit_location" type="submit">Show me</button><br>
+        <button class="button geolocate-btn" id="geolocate" type="submit">There already? Use Current Location!</button>
+    </form>
+    <form id="parking-info" action="/parking-info" method="get">
+        <p>Just parked?</p>
+        <input type="text" class="inputbar" name="level" placeholder="Which floor did you park?"><br>
+        <input type="text" class="inputbar" name="expiringtime" placeholder="When are you coming back?">
+        <button class="button show" id="submit_parked" type="submit">Remind me</button><input type="text" id="number" class="numberbox" name="number" placeholder="type number and enter">
+    </form>
+    </div>
+    <div id="listing"></div>
+    </div>
+</div>
+
+<div id="right">
+    <div id="mapClaim" class="claim" style="display: block;">
+        <h3>FIND AVAILABLE
+            <br>
+            PARKING SPACE
+        </h3>
+        <h4>EXPLORE THE MAP</h4>
+    </div>
+    <div id="map"></div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+<script src="/static/automatic.js"></script>
+<script>
+L.mapbox.accessToken = 'pk.eyJ1IjoidGVycml3bGVlIiwiYSI6ImNpazZlaThsajAwcXdpMm0ycHUyZjhiYjkifQ.zvJK8nAc3HpNOtCAMh5QlQ';
+var map = L.mapbox.map('map', 'mapbox.streets')
+    .setView([37.80, -122.27], 14);
+
+var garageLayer = L.mapbox.featureLayer().addTo(map);
+garageLayer.loadURL('/garages.geojson');
+
+garageLayer.on('layeradd', function(e) {
+    var marker = e.layer,
+        feature = marker.feature;
+
+    var popupContent = '<b>' + feature.properties.name + '</b><br><small>' + feature.properties.addr + '</small><br>' + '<div>Number of spaces: ' + feature.properties.spaces + '<br>' + 'Current parking scores: ' + feature.properties.scores + '<br>Price per hour: $' + feature.properties.price + '</div>';
+
+    marker.bindPopup(popupContent, {
+        closeButton: true,
+        minWidth: 100
+    });
+});
+
+garageLayer.on('mouseover', function(event) {
+    event.layer.openPopup();
+});
+
+    $("#right").hover(
+        function(){ //mouseenter
+            document.getElementById("left").style.opacity = ".6";
+            document.getElementById("mapClaim").style.display = "none";
+        },
+        function(){ //mouseleave
+            document.getElementById("left").style.opacity = "1";
+            document.getElementById("mapClaim").style.display = "block";
+        });
+
+    $("#submit_location").click(function(event) {
+        event.preventDefault();
+    });
+
+    $("#submit_parked").click(function(event) {
+        event.preventDefault();
+    });
+
+    $("#login").hover(
+        function(){ //mouseenter
+            $(".dropdown-content").addClass("show");
+        },
+        function(){ //mouseleave
+            $(".dropdown-content").removeClass("show");
+        });
+
+    // get current location by HTML5 geolocation API
+    var geolocate = document.getElementById("geolocate");
+    var currentLocationLayer = L.mapbox.featureLayer().addTo(map);
+
+    function findCurrentLocation(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        // $('#wait').css("display", "block");
+        map.locate();
+    }
+
+    function addMarker(latlng) {
+        var currentLocationMarker = {
+            type: 'Feature',
+            geometry: {
+                type: 'Point',
+                coordinates: [latlng.lng, latlng.lat]
+            },
+            properties: {
+                'title': 'You are here!',
+                'marker-color': '#F03C02',
+                'marker-symbol': 'star'
+            }
+        };
+
+        currentLocationLayer.setGeoJSON(currentLocationMarker).openPopup();
+    }
+
+    // check if browser supports geolocation
+    if (!navigator.geolocation) {
+        geolocate.innerHTML = 'Geolocation is not available';
+    } else {
+        $("#geolocate").on('click', findCurrentLocation);
+    }
+
+    // if location is found, zoom in, add marker.
+    map.on('locationfound', function(event) {
+        map.fitBounds(event.bounds, {
+            maxZoom: 14
+        });
+
+        addMarker(event.latlng);
+
+        geolocate.innerHTML = 'Found you! check out the map';
+
+        // $("#wait").css("display", "none");
+    })
+
+    function findAddress(results) {
+
+        if (results.status === "no found") {
+        alert("Not found! Try again.");
+        return "Not found! Try again.";
+        }
+
+        var lnglat = results.coordinates;
+        var addressLayer = L.mapbox.featureLayer().addTo(map);
+
+        var newMarker = {
+          type: 'Feature',
+          geometry: {
+            type: 'Point',
+            coordinates: lnglat
+          },
+          properties: {
+            'title': 'We found it! Click to explore',
+            'marker-color': '#F03C02',
+            'marker-symbol': 'pitch'
+          }
+        };
+
+        addressLayer.setGeoJSON(newMarker).openPopup();
+
+        map.fitBounds(addressLayer.getBounds(), {
+        maxZoom: 14
+        });
+
+    }
+
+    $("#submit_location").on('click', function() {
+        $.get('/geocode_address', {'address': address}, findAddress);
+    });
+
+    $("#submit_parked").on('click', function() {
+        $("#number").addClass("show-numberbox");
+        $("#submit_parked").removeClass = "show";
+    });
+
+</script>
+
+
+<!-- below will merge after group discussion
+ -->
+ <!--   <ul class=events>
+  {% for event in events %}
+    <li><p>lat:{{ event.lat }}</p> <p>long: {{ event.long}}</p><p>floor: {{event.floor}}</p><p>arrivDep: {{event.arrivDepart}}</p>
+  {% else %}
+    <li><em>Unbelievable.  No entries here so far</em>
+  {% endfor %}
+  </ul>
+    <ul class=garages>
+  {% for garage in garages %}
+    <li><p>{{ garage.lat }}</p> <p>{{ garage.long}}</p>
+  {% else %}
+    <li><em>Unbelievable.  No entries here so far</em>
+  {% endfor %}
+  </ul> -->
+
+</body>
+</html>
